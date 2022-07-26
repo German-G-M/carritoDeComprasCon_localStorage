@@ -1,0 +1,31 @@
+Persistencia de datos con localStorage.
+el local storage solo almacena "strings"
+El localStorage se comparte entre todas las ventanas que tengan el mismo origen (sobreviven a reinicios del navegador)
+se dispara en todos los objetos "window"
+-->se puede escribir "window.localStorage" o simplemente "localStorage"
+
+Objetivo: crear una formulario para ingresar datos y mostrar todos los datos registrados,
+además modificar o eliminar los datos ya registrados.
+
+objetivos secundarios: guardar datos en local estorage, mostrar los datos, y luego eliminarnos cuando ya no sea necesario
+
+métodos a usar:
+localStorage.setItem --> para guardar los datos en el local storage
+localStorage.removeItem --> para remover el dato guardado
+localStorage.getItem --> para obtener los datos guardados
+localStorage.clear() -->borra todo lo guardado
+localStorage.key(index)--> para obtener el nombre de la clave de la posicion "index" (se cuenta desde 0)
+localStorage.lenght --> para obtener numero de items almacenados
+
+localStorage.nombre_de_la_clave --> devuelve el valor almacenado en el "nombre_de_la_clave" (par acceder al valo almacenado)
+
+TEMAS REALACIOANDOS: 
+sessionStorage --> tiene las mismas propiedades y métodos, pero es mucho más limitado
+--los datos sobreviven cuando se refresca la pagina, pero no cuando se cierra la pestaña.
+--es accesibe en una pestaña del navegador
+
+para listar todos los elementos del localStorage:
+for (let index = 0; index < localStorage.length; index++) {
+    llave = localStorage.key(index)
+    console.log(`${llave} : ${localStorage.getItem(llave)}`)
+}

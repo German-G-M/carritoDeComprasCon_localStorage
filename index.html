@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>PRÁCTICA DE LOCAL STORAGE</h1>
+    <fieldset>
+        <legend> Datos del producto</legend>
+        <input id="prod" type="text" placeholder="ingrese el producto">
+        <input id="cantidad" type="text" placeholder="ingrese la cantidad">
+        <input id="precio" type="text" placeholder="ingrese el precio">
+        <input id="cliente" type="text" placeholder="ingrese al cliente">
+        <button id="boton" type="submit">Añadir</button>
+        <button id="boton_eliminar" type="submit">Descartar Venta</button>
+    </fieldset>
+
+    <fieldset>
+        <legend>Compras del cliente</legend>
+        <div id="nombre_cliente"></div><br>
+        <div id="salida"></div><br>
+        <div id="totales"></div><br>
+        <div id="botones_finales"></div>
+    </fieldset>
+
+    <script>
+        const boton = document.getElementById("boton");
+        const salida = document.getElementById("salida");
+
+        lst=[];
+        boton.addEventListener("click", function () {
+            console.log("esto es justo antes de hacer click en añadir",lst)
+            let producto = document.getElementById("prod").value;
+            let cantidad = document.getElementById("cantidad").value;
+            let precio = document.getElementById("precio").value;
+            let cliente = document.getElementById("cliente").value;
+            console.log("se hizo click en añadir y estamos guardando en el local storage")
+            console.log("estos son los datos:" + producto + cantidad + precio + cliente)
+
+           
+            //añadimos a nuestra lista
+            lst.push({ producto, cantidad, precio, cliente })
+            //guardamos en el local storage
+            localStorage.setItem("lista", JSON.stringify(lst))//para guardar la lista de objetos, debemos volverlos string. (es solo un elemento de string grande)
+            mostrardatos();
+
+            //limpiamos los campos, menos el nombre del clente
+            document.getElementById("prod").value = "";
+            document.getElementById("cantidad").value = "";
+            document.getElementById("precio").value = "";
+
+        })
+
+        function mostrardatos() {//debo traer los datos desde el local storage
+            salida.innerHTML = "";//antes de mostrar borramos todos los datos anteriores para no sobre escribir
+            //obtenemos el dato de local storage y lo parseamos para volverlo objeto. Si no hay datos devolverá "null" y por lo tanto tomará el otro valor (un array vacío)
+            lst = JSON.parse(localStorage.getItem("lista")) || [];
+            //si existe elementos en el localStorage mostramos los datos
+            if (lst.length!=0) {
+                console.log("el localStorage tiene datos!")
+                console.log("datos ----->", lst)//mostramos los datos parseados
+
+                //si existen datos en el local storage, ponemos el nombre del client en el campo "cliente"
+                document.getElementById("cliente").value = lst[0].cliente;
+                nombre_cliente.innerHTML = `<b>Cliente:</b> ${lst[0].cliente} <b>CI:</b>  <b>Cod:</b>`
+                let suma_precios = 0;//para sumar todos los precios
+                lst.forEach((element, indice) => {
+                    salida.innerHTML += `${element.producto}-- ${element.cantidad}kg -- ${element.precio} Bs. ---  <button onClick="eliminarProducto(${indice})"> X </button></br>`
+                    suma_precios = suma_precios + parseFloat(element.precio)
+                });
+                puntos = suma_precios / 3;
+
+
+                total_productos = lst.length;
+                mostrarTotales(total_productos, suma_precios, puntos);
+                mostrarBotones();
+
+            } else {
+                //ingresa aqui cuando se quitan todos los productos uno a uno
+                console.log("el local storage esta vacío")
+                //limpiamos las compras del cliente y quitamos todos los datos
+                document.getElementById("cliente").value = "";
+                salida.innerHTML="";
+                nombre_cliente.innerHTML="";
+                totales.innerHTML="";
+                botones_finales.innerHTML="";
+            }
+
+        }
+
+        function mostrarTotales(total_productos, suma_precios, puntos) {
+            totales.innerHTML = `<b>Total Productos:</b> ${total_productos} <br> <b>Total Venta:</b> ${suma_precios} <br> <!-- <b>Puntos acumulados:</b> ${puntos}-->`;
+        }
+
+        function mostrarBotones() {
+            botones_finales.innerHTML = `<button>REGISTRAR PUNTO</button> <button onclick="descartarVenta()"> Descartar Venta</button>`;
+        }
+
+        boton_eliminar.addEventListener("click", function () {
+            localStorage.clear()//el botón descartar venta limpiará el localStorage
+            location.reload()
+        })
+
+        function descartarVenta() {
+            localStorage.clear()//el botón descartar venta limpiará el localStorage
+            location.reload()
+        }
+        function eliminarProducto(indice) {//muestra la nueva lista con el producto eliminado
+            //debemos eliminar desde el local storage y luego volver a guardarlo sin el dato seleccionado
+            lst = JSON.parse(localStorage.getItem("lista"))//obtenemos el dato de local storage y lo parseamos para volverlo objeto
+            console.log("lista antes de eliminar", lst)
+            lst = lst.filter((elemen, index) => index != indice); //guardamos todo, memos el seleccionado
+            console.log("lista despues de eliminar", lst)
+            localStorage.setItem("lista", JSON.stringify(lst))//guardamos en local storage//
+            console.log("localStorage después de eliminar", localStorage)
+            mostrardatos()//una vez eliminados los datos volvemos a mostrar
+        }
+
+        mostrardatos();//llamamos a la función mostrar datos usando la persitencia (para que aunque salgamos de la pagina se mantenga)
+    </script>
+
+</body>
+<script src="script.js"></script>
+
+</html>
